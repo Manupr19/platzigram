@@ -42,3 +42,12 @@ def say_hi(request,name,age):
 ```
 
 ##creacion de la primera app
+creamos la app posts ```py manage.py startapp posts``` y en views.py de la aplicacionm post creamos el metodo list_posts
+```
+def list_posts(request):
+    posts=[1,2,3]
+    return HttpResponse(str(posts))
+```
+no olvidar importar libreria from django.http import HttpResponse
+
+Una buena practica en las urls es poner nombre a las locales y a las urls de la las apps (local_views/post_views)
