@@ -42,7 +42,7 @@ def say_hi(request,name,age):
 ```
 
 ## Creacion de la primera app
-creamos la app posts ```py manage.py startapp posts``` y en views.py de la aplicacionm post creamos el metodo list_posts
+creamos la app posts ```py manage.py startapp posts``` y en views.py de la aplicacion post creamos el metodo list_posts
 ```
 def list_posts(request):
     posts=[1,2,3]
@@ -170,4 +170,82 @@ Posteriormente en feed.html con ayuda de boostrap hacemos una plantilla en la qu
 </body>
 </html>
 ```
+## Patrones de diseño y Django
 
+Vemos el MVC:
+
+Controler- maneja la logica y el request sabe que hacer en ese momento y sabe que template tiene que mostrar, el controler va a cambiar los datos a traves del modelo
+
+Modelo- se encarga de definir la estructura de los datos, el acceso a ellos e incluso la validación 
+
+Vista- Se encarga de como presentar esos datos que alfinal van a ser mostrados al usuario 
+
+vemos el MTV(model template view) implementado por Django:
+
+Modelo- Define la estructura de los datos
+
+Template-Logica de presentacion de datos
+
+Views- Encargado de traer los datos y pasarlos al template
+# MODELOS
+## La M en el MTV
+Quitamos error de migraciones con ```py manage.py migrate```
+creamos en models.py una clase usuario con todos los campo
+```
+from django.db import models
+
+class User(models.Model):
+    email=models.EmailField(unique=True)
+    password=models.CharField(max_length=100)
+    firts_name=models.CharField(max_length=100)
+    last_name=models.CharField(max_length=100)
+    bio=models.TextField(blank=True)
+    birthdate = models.DateField(blank=True,null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+```
+utilizamos el comando ```py manage.py makemigrations```
+y debemos hacer py manage.py migrate para solucionar el warning de la migracion post
+
+NOTA:
+-Makemigrations- Va a buscar los cambios en los modelos y lo va a reflejar en el archivo initial
+-migrate- Va a aplicar esos cambios en la base de datos
+
+## El ORM de Django
+
+Una vez tenemos el modelo lo que sigue es crear datos usando el ORM 
+
+para usar el shell con nuestra app usamos ```py manage.py shell```
+creamos un usuario desde aqui con los siguientes atributos
+```
+Manu = User.objects.create(
+... email='hola@gmail.com',       
+... password='1234567',     
+... firts_name='Manu',  
+... last_name='Pazos'             
+... )
+```
+Otra manera desde la shell
+
+```
+Arturo = User()
+>>> Arturo.email='arturo@gmail.com'
+>>> Arturo.firts_name = 'Arturo'
+>>> Arturo.last_name='Carmona' 
+>>> Arturo.password='1234'     
+>>> Arturo.is_admin = True
+>>> Arturo.save()
+```
+Si queremos borrarlo solo tenemos que hacer >>>Usuario.delete()
+
+Para traer usuarios:
+ <<< from posts.models import User
+ <<< user = User.objects.get(email='freddier@platzi.com')
+ 
+ A partir de aqui podemos ver todos los atributos de ese user, ejemplo user.password 
+
+ <<< platzi_users = User.objects.filter(email__endwith='@gmail.com')
+
+User.object.all() para traer todos
+
+Tener en cuenta que get solo regresa un objeto 
