@@ -249,3 +249,84 @@ Para traer usuarios:
 User.object.all() para traer todos
 
 Tener en cuenta que get solo regresa un objeto 
+
+## Extendiendo el modelo de usuario 
+
+Desde la shell creamos un nuevo usuario, primero ponemos como vimos antes ```py manage.py shell```;
+
+A continuación importamos la libreria siguiente y creamos un nuevo usuario:
+```
+from django.contrib.auth.models import User 
+u= User.objects.create_user(username='yesika',password='admin123') 
+
+```
+Posteriormente podemos comprobar los datos de este usuario poniendo u.pk o u.password y nos fijaremos que la contraseña esta encriptada.
+
+Ahora creamos un superusuario:
+```py manage.py createsuperuser ```
+
+Tambien debemos importar en urls.py la libreria
+```from django.contrib import admin```
+
+Y añadir ``` path('admin/',admin.site.urls),```
+
+## Implementación del modelo de usuarios
+
+Creamos una nueva app para usuarios ```py manage.py startapp users```
+
+Posteriormente vamos a models.py de la app y vamos creando los atributos( user, website, phone number), dentro de la clase profile:
+NOTA:cada user es unico por ello la relacion ONETOONE
+```
+class Profile(models.Mode):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    website=models.URLField(max_length=200,blank=True)
+    phone_number=models.CharField(max_length=20,blank=True)
+
+    picture=models.ImageField(upload_to='users/pictures',blank=True,null=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified= models.DateTimeField(auto_now=True)
+
+    def __str__(self) :
+        return self.user.username
+```
+despues instalamos pillow, hacemos make migrations y migrate
+
+y vemos como se ha creado la tabla users_profile en la base de datos
+
+## Explorando el dashboard de administración 
+
+Añadimos funcionalidades de admin en admin.py importando libreria 
+```
+from users.models import Profile
+admin.site.register(Profile)
+
+```
+Esto desbloquea una opcion en la pantalla de admin para gestionar estos
+
+Posteriormente creamos una clase para mostrar todo los campos de Profile
+```
+@admin.register(Profile) #se llama decorador para hacerlo en una linea
+class ProfileAdmin(admin.ModelAdmin):
+    list_display=('user','phone_number','website','picture')
+```
+añadimos list_display_links para ir al detalle de cada uno 
+
+```list_display_links=('pk','user','phone_number')```
+
+Podemos usar list_editable para editar los datos desde la página, NOTA: solo puede estar o en list_display_links o en list_editable
+
+```  list_editable=('phone_number','website','picture')```
+
+Despues en los admin como puede haber mas de uno añadimos la función de buscar para ello creamos otra variable search_fields:
+
+```
+search_fields = ('user__email','user__firtsname','user_last_name','phone_number')
+
+```
+Por último añadiremos filtros para una mejor busqueda
+
+```
+list_filter=('created','modified','user__is_active','user__is_staff')
+
+```
