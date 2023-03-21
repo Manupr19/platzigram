@@ -483,3 +483,4 @@ def list_posts(request):
     return render(request,'posts/feed.html',{'posts':posts})
 
 ```
+NOTA: PREGUNTAR PORQUE NO LO PROTEGE 

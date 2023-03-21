@@ -15,5 +15,7 @@ urlpatterns = [
     path('sorted/',local_views.sort_integers,name='sort'),
     path('hi/<str:name>/<int:age>/',local_views.say_hi,name='hi'),
     path('posts/', post_views.list_posts,name='feed'),
-    path('accounts/login/',user_views.login_view,name='login')
+    path('accounts/login/',user_views.login_view,name='login'),
+    path('accounts/logout/',user_views.logout_view,name='logout'),
+
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
