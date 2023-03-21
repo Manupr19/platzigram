@@ -17,5 +17,6 @@ urlpatterns = [
     path('posts/', post_views.list_posts,name='feed'),
     path('accounts/login/',user_views.login_view,name='login'),
     path('accounts/logout/',user_views.logout_view,name='logout'),
+    path('accounts/signup/',user_views.signup,name='signup'),
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

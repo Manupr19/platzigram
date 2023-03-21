@@ -484,3 +484,83 @@ def list_posts(request):
 
 ```
 NOTA: PREGUNTAR PORQUE NO LO PROTEGE 
+
+## Logout
+
+Lo primero que debemos hacer es dirigirnos a urls.py y crear un path para el logout, despues crearemos la vista asociada a este path:
+```path('accounts/logout/',user_views.logout_view,name='logout'),```
+
+Después creamos el metodo y le ponemos @loginrequiered con la libreria from django.contrib.auth.decorators import login_required, para que no se pueda acceder a el directamente como pasaba anteriormente con posts
+
+```
+@login_required
+def logout_view(request):
+   logout(request)
+   return redirect('login')
+
+```
+
+## Registro de usuario 
+
+lo primero que hacemos es crear el path en urls.py 
+```path('accounts/signup/',user_views.signup,name='signup'),```
+en views creamos el metodo signup 
+```
+def signup(request):
+   if request.method == 'POST':
+      username= request.POST['username']
+      passwd = request.POST['password']
+      passwd_con = request.POST['password_confirmation']
+      if passwd!=passwd_con:
+         return render(request,'users/signup.html', {'error': 'Confirmacion de contraseña no coincide'})
+      try:
+            user= User.objects.create_user(username=username,password=passwd)
+      except IntegrityError:
+            return render(request,'users/signup.html', {'error': 'el nombre de usuario esta ya en uso'})
+      user.firts_name = request.POST['firts_name']
+      user.last_name = request.POST['last_name']
+      user.email = request.POST['email']
+      user.save()
+      profile= Profile(user=user)
+      profile.save()
+
+      return redirect('login')
+   return render(request,'users/signup.html')
+   ``` 
+   Por ultimo creamos el formulario de signup 
+   ´´´
+   {% extends "users/base.html" %}
+
+{% block head_content %}
+<title> Platzigram signup</title>
+{% endblock %}
+
+{% block container %}
+    {% if error %}
+        <p class="alert alert-danger"></p>
+    {% endif %}
+    <form action="{% url 'signup' %}" method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Username" name="username" required="true"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" placeholder="Password" name="password" required="true"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" placeholder="Password confirmation" name="password_confirmation" required="true"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Firts name" name="firts_name" required="true"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Last name" name="last_name" required="true"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="email" placeholder="Email address" name="email" required="true"/>
+        </div>
+        <button class="btn btn-primary btn-block mt-5" type="'submit">Registrate!</button>
+    </form>
+{% endblock %}
+```
