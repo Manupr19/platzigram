@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 #class User(models.Model):
  #   email=models.EmailField(unique=True)
   #  password=models.CharField(max_length=100)
@@ -13,3 +13,17 @@ from django.db import models
 
 #def __str__(self):
  #   return self.email
+class Post(models.Model):
+ 
+ user=models.ForeignKey(User, on_delete=models.CASCADE)
+ profile= models.ForeignKey('users.Profile', on_delete=models.CASCADE)
+
+ title=models.CharField(max_length=255)
+ photo= models.ImageField(upload_to='posts/photos')
+
+ created= models.DateTimeField(auto_now=True)
+ modified= models.DateTimeField(auto_now=True)
+
+ def __str__(self):
+  #devuelve titulo y username
+  return '{} by @{}'.format(self.title,self.user.username)
