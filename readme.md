@@ -330,3 +330,83 @@ Por último añadiremos filtros para una mejor busqueda
 list_filter=('created','modified','user__is_active','user__is_staff')
 
 ```
+## Dashboard de administración 
+ Seguimos añadiendo cosas a admin.py, primero añadiremos las librerias
+
+  ```
+from users.models import Profile
+from django.contrib.auth.models import User
+```
+Después creamos los metodos ProfileInline y userAdmin
+```
+class ProfileInline(admin.StackedInline):
+        model = Profile
+        can_delete = False
+        verbose_name_plural='profiles'
+
+    class UserAdmin(BaseUseradmin):
+        #añadir profile admin to base user admin
+        #inlines=(ProfileInline,)
+        list_display=(
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'is_active',
+            'is_staff',
+
+        )
+
+    admin.site.unregister(User)
+    admin.site.register(User,UserAdmin)
+```
+NOTA: Preguntar porque hay un error en Useradmin si la clase esta justo arriba, tampoco va en urls py lo de las imagenes
+## Creacion del modelo de posts 
+
+Lo siguiente que hacemos es modificar la clase Post en model.py de users 
+´´´
+class Post(models.Model):
+ 
+ user=models.ForeignKey(User, on_delete=models.CASCADE)
+ profile= models.ForeignKey('users.Profile', on_delete=models.CASCADE)
+
+ title=models.CharField(max_length=255)
+ photo= models.ImageField(upload_to='posts/photos')
+
+ created= models.DateTimeField(auto_now=True)
+ modified= models.DateTimeField(auto_now=True)
+
+ def __str__(self):
+  #devuelve titulo y username
+  return '{} by @{}'.format(self.title,self.user.username)
+  ```
+  Después para solucionar el problema de que las imagenes en admin no se ven en el url pattern haremos lo siguiente:
+  
+  primero importar las librerias from django.conf.urls.static import static y from django.conf import settings
+  y al final de urlpatterns hacer :
+
+  ```
+urlpatterns = [
+    path('admin/',admin.site.urls),
+    path('hello-world/',local_views.hello_wordl),
+    path('sorted/',local_views.sort_integers),
+    path('hi/<str:name>/<int:age>/',local_views.say_hi),
+    path('posts/', post_views.list_posts),
+]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+  ```
+  Por último en settings añadiremos 
+
+  ```
+
+  MEDIA_ROOT=BASE_DIR / 'media'
+  MEDIA_URL='/media/'
+
+  ```
+
+## Templates y archivos estaticos
+
+En este apartado hemos creado los templates css, hemos añadido imagenes y creado todos los documentos html ademas de hacer el nav que es la pantalla de posts inicial
+
+NOTA: PREGUNTAR PORQUE NO SALE LOS ICONOS DE ARRIBA SOLO EL DE INSTAGRAM
+
