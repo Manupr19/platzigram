@@ -465,4 +465,21 @@ def login_view(request):
  
  return render(request,'users/login.html')
  ```
- 
+ Posteriormente en login.html cuando el login sea incorrecto lo pondremos en rojo de esta form 
+
+ ```
+    {% if error %}
+      <p style="color:red;">{{error}}</p>
+   {% endif %}
+
+```
+Seria conveniente proteger la vista de post para que no entraran poniendo la url sin estar logeados para ello
+nos vamos a la vista de post y utilizando la libreria from django.contrib.auth.decorators import login_required, la utilizamos asi:
+
+``` 
+@login_required
+def list_posts(request):
+   
+    return render(request,'posts/feed.html',{'posts':posts})
+
+```

@@ -7,7 +7,9 @@
 {% endblock%}
 
 {% block container %}
-
+   {% if error %}
+      <p style="color:red;">{{error}}</p>
+   {% endif %}
    <form method="POST" action ="{% url "login" %}">
       {% csrf_token %}
     
