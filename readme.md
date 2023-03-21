@@ -564,3 +564,5 @@ def signup(request):
     </form>
 {% endblock %}
 ```
+## Midleware
+
