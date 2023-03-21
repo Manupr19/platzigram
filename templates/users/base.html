@@ -1,37 +1,29 @@
-{% load static %}
-<nav class="navbar navbar-expand-lg fixed-top" id="main-navbar">
-    <div class="container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block head_content %}{% endblock %}
 
-        <a class="navbar-brand pr-5" style="border-right: 1px solid #efefef;" href="{% url "posts:feed" %}">
-            <img src="{% static "img/instagram.png" %}" height="45" class="d-inline-block align-top"/>
-        </a>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
+</head>
+<body class="h-100">
 
-                <li class="nav-item">
-                    <a href="{% url "users:detail" request.user.username %}">
-                        {% if request.user.profile.picture %}
-                            <img src="{{ request.user.profile.picture.url }}" height="35" class="d-inline-block align-top rounded-circle"/>
-                        {% else%}
-                            <img src="{% static 'img/default-profile.png' %}" height="35" class="d-inline-block align-top rounded-circle"/>
-                        {% endif %}
-                    </a>
-                </li>
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-sm-12 col-md-5 col-lg-5 pt-2 pl-5 pr-5 pb-5" id="auth-container">
 
-                <li class="nav-item nav-icon">
-                    <a href="{% url "posts:create" %}">
-                        <i class="fas fa-plus"></i>
-                    </a>
-                </li>
+                <img src="{% static "img/instagram.png" %}" class="img-fluid rounded mx-auto d-block pb-4" style="max-width: 60%;">
 
-                <li class="nav-item nav-icon">
-                    <a href="{% url "users:logout" %}">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </a>
-                </li>
+                {% block container %}{% endblock%}
 
-            </ul>
+            </div>
         </div>
     </div>
-</nav>
+
+</body>
+</html>
+

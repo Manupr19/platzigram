@@ -410,3 +410,59 @@ En este apartado hemos creado los templates css, hemos añadido imagenes y cread
 
 NOTA: PREGUNTAR PORQUE NO SALE LOS ICONOS DE ARRIBA SOLO EL DE INSTAGRAM
 
+## Login
+
+Vamos a realizr el proceso de autenticación 
+para ello primero creamos el path 
+
+``` path('user/login/',user_views.login_view,name='login')```
+
+despues nos vamos a views y crearemos la funcion login_views
+
+``` from django.contrib.auth import authenticate, login 
+from django.shortcuts import render
+
+def login_view(request):
+    return render(request,'users/login.html')
+```
+NOTA: Siempre que necesite un debuger utilizar  import pdb; pdb.set_trace()
+
+Ahora nos vamos a /templates/users/login.html lo que haremos sera hacer un formulario y poner el token csrf
+```
+{% extends "users/base.html" %}
+
+
+
+{% block head_content %}
+<title>Platzigram sign in</title>
+{% endblock%}
+
+{% block container %}
+
+   <form method="POST" action ="{% url "login" %}">
+      {% csrf_token %}
+    
+      <input type="text" placeholder="Username" name="username" />
+      <input type="password" placeholder="Password" name="password" />
+      <button type="submit">Inicia sesion!</button>
+   </form>
+{% endblock %}
+
+```
+posteriormente hacemos en views.py el trato con el inicio de sesión correcto e incorrecto
+```
+def login_view(request):
+ if request.method == 'POST':
+    username = request.POST['username']
+    password=request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user:
+        login(request,user)
+        return redirect('feed')
+    else:
+        return render(request,'users/login.html', {'error':'Contraseña o usuario no valido'})
+   
+ 
+ return render(request,'users/login.html')
+ ```
+ 
