@@ -566,3 +566,42 @@ def signup(request):
 ```
 ## Midleware
 
+Modificación de objetos antes y despues de salir de la vista
+- Lo primero es ir a las urls y crear una vista llamada accounts/me/profile
+-despues vamos a /users/views y creamos dicha funcion:
+
+```
+def update_profile(request):
+return render(request,'users/update_profile.html')
+```
+Como vemos invoca a update_profile.html lo que haremos a continuacion es formar este documento
+
+```
+{% extends "base.html" %}
+
+{% block head_content %}
+<title>@{{request.user.username}} | Update profile</title>
+{% endblock %}
+
+{% block container %}
+    <h1 class="mt-5">@{{request.user.username}}</h1>
+{% endblock %}
+```
+posteriormente creamos midleware.py
+
+```
+from django.shortcuts import redirect
+
+class ProfileCompletionMiddleware:
+    def __init__(self,get_response):
+        self.get_response=get_response
+
+    def __call__(self,request):
+        if not request.user.is_anonymous:
+            profile = request.user.profile
+            if not profile.picture or not profile.biography:
+                return redirect('update_profile')
+        response = self.get_response(request)
+        return response
+```
+Posteriormente vamos a settings.py y instalamos nuestro midelware
