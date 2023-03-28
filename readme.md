@@ -604,4 +604,63 @@ class ProfileCompletionMiddleware:
         response = self.get_response(request)
         return response
 ```
-Posteriormente vamos a settings.py y instalamos nuestro midelware
+Posteriormente vamos a settings.py y instalamos nuestro midleware
+
+y este estara funcionando para perfiles que no esten completos los redireccionara a accounts/me/update
+
+## Formularios en django
+
+Actualizamos el metodo update_profile
+```
+def update_profile(request):
+    profile= request.user.profile
+
+    return render(request=request,template_name='users/update_profile.html',context={'profile':profile,'user':request.user})
+
+```
+despues modificamos el update_profile
+
+django form fields reference (documentacion)
+
+creamos forms.py y dentro añadimos una clase ProfileForm
+```
+from django import forms
+
+class ProfileForm(forms.Form):
+    website=forms.URLField(max_length=200,required=True)
+    biography= forms.CharField(max_length=500,required=False)
+    phone_number= forms.CharField(max_length=20,required=False)
+    picture=forms.ImageField()
+    
+```
+Dentro del formulario update_profile deberemos retocar ciertas cosas, por ejemplo añadir si hay un error en el formulario que me notifique cual es 
+```
+{% if form.errors %}
+                    <p class="alert alert-danger">{{form.
+                errors}}</p>
+                {% endif %}
+```
+Nota: tambien debemos cambiar ``` <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">``` para que se puedan subir archivos y cambiar en las vistas ```form = ProfileForm(request.POST,request.FILES)```
+
+Despues procederemos a guardar los datos
+```
+ if form.is_valid():
+            data= form.cleaned_data
+            profile.website = data['website']
+            profile.phone_number = data['phone_number']
+            profile.biography = data['biography']
+      
+            profile.picture = data['picture']
+            profile.save()
+```
+por ultimo hacemos return redirect('update_profile') a la misma pagina y mostramos la imagen de esta forma:
+```
+   {% if profile.picture %}
+                        <img src="{{ profile.picture.url }}" class="rounded-circle" height="50" />
+                    {% else%}
+                        <img src="{% static 'img/default-profile.png' %}" class="rounded-circle" height="50" />
+                    {% endif %}
+```
+NOTA: al recargar no volvemos a mandar el formulario por el redirect
+
+## Mostrando el Form en el template
