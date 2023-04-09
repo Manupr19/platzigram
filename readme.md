@@ -564,6 +564,7 @@ def signup(request):
     </form>
 {% endblock %}
 ```
+
 ## Midleware
 
 Modificación de objetos antes y despues de salir de la vista
@@ -718,6 +719,7 @@ def create_posts(request):
     )
 ```
 y creamos posts.forms.py
+
 ```
 
 # Django
