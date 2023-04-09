@@ -664,3 +664,131 @@ por ultimo hacemos return redirect('update_profile') a la misma pagina y mostram
 NOTA: al recargar no volvemos a mandar el formulario por el redirect
 
 ## Mostrando el Form en el template
+ Lo que haremos es mejorar la forma de mostrar los errores 
+ ```class="form-control {% if form.website.errors %}is-invalid{% endif %}"```
+ ```  value="{% if form.errors %}{{ form.website.value }}{% else %}{{ profile.website }}{% endif %}
+ ``` 
+ despues le decimos cual fue el error
+
+ ```
+ <div class="invalid-feedback">
+                        {% for error in form.website.errors %}
+                            {{ error }}
+                        {% endfor%}
+                    </div>
+                </div>
+```
+```
+   {% for error in form.picture.errors %}
+                <div class="alert alert-danger">
+                    <b>Picture: </b>{{ error }}
+                </div>
+                {% endfor %}
+
+
+```
+esto lo aplicamos en todos los campos, biography y igual con phone_number
+```
+## Model forms
+Otra manera de creacion de forms
+lo primero que hacemos es crear un path nuevo para la creacion de nuevos posts en urls.py 
+```
+path('posts/new',post_views.create_post,name='create_post'),
+```
+y despues creamos el metodo en views.py de post
+```
+@login_required
+def create_posts(request):
+    if request.method =='POST':
+        form = PostForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('feed')
+    else:
+        form= PostForm()
+    return render(
+        request=request,
+        template_name='posts/new.html',
+        context={
+            'form': form,
+            'user': request.user,
+            'profile': request.user.profile
+        }
+       
+    )
+```
+y creamos posts.forms.py
+```
+
+# Django
+from django import forms
+
+# Models
+from posts.models import Post
+
+
+class PostForm(forms.ModelForm):
+    """Post model form."""
+
+    class Meta:
+        """Form settings."""
+
+        model = Post
+        fields = ('user', 'profile', 'title', 'photo')
+``` 
+Despues creamos en los templates new.html
+```
+{% extends "base.html" %}
+
+{% block head_content %}
+<title>Create new post</title>
+{% endblock %}
+
+{% block container %}
+
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-6 pt-3 pb-3" id="profile-box">
+                <h4 class="mb-4">Post a new photo!</h4>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="user" value="{{ user.pk}}" />
+                    <input type="hidden" name="profile" value="{{ profile.pk }}" />
+
+                    {# Website field #}
+                    <div class="form-group">
+                        <input
+                            class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+                            type="text"
+                            name="title"
+                            placeholder="Title"
+                        >
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}{{ error }}{% endfor %}
+                        </div>
+                    </div>
+
+                    {# Photo field #}
+                    <div class="form-group">
+                        <label>Choose your photo:</label>
+                        <input
+                            class="form-control {% if form.photo.errors %}is-invalid{% endif %}"
+                            type="file"
+                            name="photo"
+                            placeholder="photo"
+                        >
+                        <div class="invalid-feedback">
+                            {% for error in form.photo.errors %}{{ error }}{% endfor %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mt-5">Publish!</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+```
