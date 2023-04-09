@@ -794,3 +794,39 @@ Despues creamos en los templates new.html
 
 {% endblock %}
 ```
+Posteriormente vamos retocando las opciones de la barra de navegacion añadiendole funcionalidad
+ añadimos funcionalidad al icono de instagram
+
+´´´
+ <a class="navbar-brand pr-5" style="border-right: 1px solid #efefef;" href="{% url "feed" %}">
+            <img src="{% static "img/instagram.png" %}" height="45" class="d-inline-block align-top"/>
+        </a>
+```
+Despues añadimos el icono del perfil propio 
+```
+ <li class="nav-item">
+                    <a href="">
+                        {% if request.user.profile.picture %}
+                        <img src="{{request.user.profile.picture.url}}" height="35" class="d-inline-block align-top rounded-circle"/>
+                        {% else %}
+                            <img src="{% static 'img/default-profile.png' %}" height="35" class="d-inline-block align-top rounded-circle"/>
+                        {% endif %}
+                    </a>
+                </li>
+```
+Despues linkamos el ultimo boton que es el de new posts 
+``` 
+  <li class="nav-item nav-icon">
+                    <a href="{% url "create_post" %}">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </li>
+```
+Despues actualizamos el feed al real lo que hacemos es eliminar en views.py los precargados 
+```
+@login_required
+def list_posts(request): 
+    posts = Post.objects.all().order_by('-created')
+    return render(request,'posts/feed.html',{'posts':posts})
+```
+##Validacion de campos de un formulario 
