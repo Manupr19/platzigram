@@ -11,7 +11,7 @@ def hello_world(request):
     return HttpResponse('Hello world')
 urlpatterns = [
     path('admin/',admin.site.urls),
-    path('hello-world/',local_views.hello_wordl, name='hello_world'),
+    path('hello-world/',local_views.hello_world, name='hello_world'),
     path('sorted/',local_views.sort_integers,name='sort'),
     path('hi/<str:name>/<int:age>/',local_views.say_hi,name='hi'),
     path('posts/', post_views.list_posts,name='feed'),
@@ -19,5 +19,6 @@ urlpatterns = [
     path('accounts/logout/',user_views.logout_view,name='logout'),
     path('accounts/signup/',user_views.signup,name='signup'),
     path('accounts/me/profile',user_views.update_profile,name='update_profile'),
-
+    path('posts/new',post_views.create_posts,name='create_post'),
+    
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

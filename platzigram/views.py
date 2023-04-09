@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from datetime import datetime 
 import json 
-def hello_wordl(request):
+def hello_world(request):
     now = datetime.now().strftime('%b %dth, %Y - %H:%M hrs')
     return HttpResponse('Hola, la hora actual del server es {now}'.format(now=now))
 
