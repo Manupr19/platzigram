@@ -830,3 +830,7 @@ def list_posts(request):
     return render(request,'posts/feed.html',{'posts':posts})
 ```
 ##Validacion de campos de un formulario 
+
+En forms.py hemos usado los Validates para comprobar que los datos introducidos son correctos
+
+## Class-based views
