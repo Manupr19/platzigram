@@ -10,9 +10,9 @@ from users import views as user_views
 def hello_world(request):
     return HttpResponse('Hello world')
 urlpatterns = [
-
-    path('admin/',admin.site.urls),
+    
     path('', include(('posts.urls', 'posts'), namespace='posts')),
+    path('admin/',admin.site.urls),
     path('users/',include(('users.urls','users'),namespace='users')),
 
  

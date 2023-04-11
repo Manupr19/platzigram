@@ -9,8 +9,18 @@ from django.db.utils import IntegrityError
 # Models
 from django.contrib.auth.models import User
 from users.models import Profile
+from django.contrib.auth.models import User
 # forms
 from users.forms import ProfileForm, SignupForm
+
+from django.views.generic import DetailView
+
+class UserDetailView(DetailView):
+   template_name= 'users/detail.html'
+   slug_field ='username'
+   slug_url_kwarg = 'username'
+   queryset = User.objects.all()
+
 
 def login_view(request):
  if request.method == 'POST':

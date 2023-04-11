@@ -834,3 +834,9 @@ def list_posts(request):
 En forms.py hemos usado los Validates para comprobar que los datos introducidos son correctos
 
 ## Class-based views
+En este apartado hemos cambiado las distribución de las urls seprandolas en posts y users para hacerlo mas ordenado y hemos corregido que cuando no se introduzca nada se vaya a lists_posts, tambien hemos puesto gracias a 
+```  path(route='<str:username>/',view=TemplateView.as_view(template_name='users/detail.html'),name='detail'),```
+que cuando introduzcas cualquier nombre salte la plantilla detail.html que son las opciones del propio perfil.
+
+## Protegiendo la vista de perfil detail view y list view
+
