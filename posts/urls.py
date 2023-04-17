@@ -10,7 +10,7 @@ urlpatterns=[
     ),
       path(
     route='posts/new/',
-    view=views.create_posts,
+    view=views.CreatePostView.as_view(),
     name='create_post'
     ),
  

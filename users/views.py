@@ -16,7 +16,7 @@ from users.models import Profile
 from django.contrib.auth.models import User
 
 # forms
-from users.forms import ProfileForm, SignupForm
+from users.forms import Profile, SignupForm
 
 from django.views.generic import DetailView
 class UserDetailView(LoginRequiredMixin,DetailView):
@@ -45,13 +45,13 @@ def login_view(request):
     else:
         return render(request,'users/login.html', {'error':'Contraseña o usuario no valido'})
    
- 
+ print('haciendo login')
  return render(request,'users/login.html')
 
 #@login_required
 def logout_view(request):
    logout(request)
-   return redirect('login')
+   return redirect('users:login')
 
 def signup(request):
    if request.method == 'POST':
@@ -59,9 +59,9 @@ def signup(request):
       if form.is_valid():
          form.save()
          return redirect('users:login')
-      else:
+   else:
          form = SignupForm()
-      return render(
+   return render(
          request=request,
          template_name='users/signup.html',
          context={'form' :form}
@@ -72,7 +72,7 @@ def signup(request):
 def update_profile(request):
     profile=request.user.profile
     if request.method == 'POST':
-        form = ProfileForm(request.POST,request.FILES)
+        form = Profile(request.POST,request.FILES)
         if form.is_valid():
             data= form.cleaned_data
             profile.website = data['website']
@@ -84,7 +84,7 @@ def update_profile(request):
             url = reverse('users:detail', kwargs={'username': request.user.username})
             return redirect(url)
     else:
-        form= ProfileForm()
+        form= Profile()
 
     return render(
         request=request,template_name='users/update_profile.html',
