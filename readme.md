@@ -840,3 +840,14 @@ que cuando introduzcas cualquier nombre salte la plantilla detail.html que son l
 
 ## Protegiendo la vista de perfil detail view y list view
 
+## Create_view Formview y UPdateview
+Añado paginación a la aplicacion
+reverse_lazy es mejor que redirect mas seguro 
+## Generic auth views
+podemos hacer las vistas con plantillas generales por ejemplo:
+
+```
+class loginView(auth_views.LoginView):
+   template_name='users/login.html'
+```
+
