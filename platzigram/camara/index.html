@@ -53,6 +53,17 @@ init();
 var context = canvas.getContext('2d');
 snap.addEventListener("click", function() {
 context.drawImage(video, 0, 0, 640, 480);
+//envia la imagen al servidor 
+// Convertir la imagen a un objeto de archivo y crear un objeto FormData
+var file = canvas.toBlob(function(blob) {
+        var formData = new FormData();
+        formData.append('photo', blob);
+        
+        // Enviar la foto al servidor mediante una solicitud HTTP POST
+        var request = new XMLHttpRequest();
+        request.open('POST', 'https://tu-servidor.com/upload');
+        request.send(formData);
+    });
 });
     </script>
 </body>
