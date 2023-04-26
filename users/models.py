@@ -14,3 +14,10 @@ class Profile(models.Model):
 
     def __str__(self) :
         return self.user.username
+
+def upload_path(instance, filename):
+    return 'user_{0}/{1}'.format(instance.user.id,filename)
+
+class Fotos(models.Model):
+    img = models.ImageField(upload_to=upload_path,blank=True,null=True)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)

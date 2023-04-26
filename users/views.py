@@ -21,6 +21,7 @@ from users.forms import Profile, SignupForm
 
 from django.views.generic import DetailView,FormView
 from django.urls import reverse_lazy
+
 class UserDetailView(LoginRequiredMixin,DetailView):
    template_name= 'users/detail.html'
    slug_field ='username'
@@ -65,9 +66,16 @@ class SignupView(FormView):
 
     def form_valid(self, form):
         """Save form data."""
+        print('validando')
         form.save()
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+       print('formulario invalido')
+       print(form.cleaned_data)
+       print(form.errors)
+       return super().form_invalid(form)
+      
      
 @login_required
 def update_profile(request):
