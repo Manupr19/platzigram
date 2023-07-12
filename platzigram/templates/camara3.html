@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Envío de foto con cuenta atrás</title>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<div>
+		<!-- Video de la webcam -->
+		<video id="video" width="640" height="480"></video>
+	</div>
+	<div>
+		<!-- Botón de inicio de la cuenta atrás -->
+		<button id="countdown-btn" disabled>Iniciar cuenta atrás</button>
+	</div>
+	<div>
+		<!-- Tiempo restante de la cuenta atrás -->
+		<p id="countdown-timer"></p>
+	</div>
+	<div>
+		<!-- Botón para tomar la foto -->
+		<button id="take-photo-btn" disabled>Tomar foto</button>
+	</div>
+	<div>
+		<!-- Aquí se muestra la foto tomada -->
+		<img id="photo-preview" src="#" alt="Tu foto">
+	</div>
+
+	<script>
+		// Objetos para interactuar con la cámara y el canvas
+		const video = document.getElementById('video');
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		canvas.width = video.width;
+		canvas.height = video.height;
+
+		// Inicializar la cámara
+		navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+			.then(function(stream) {
+				video.srcObject = stream;
+				video.play();
+			})
+			.catch(function(err) {
+				console.log('Ocurrió un error al acceder a la cámara: ' + err);
+			});
+
+		// Contador para la cuenta atrás
+		let countdown = null;
+
+		// Función para actualizar el contador
+		function updateCountdown(secondsLeft) {
+			const countdownTimer = document.getElementById('countdown-timer');
+			countdownTimer.textContent = `Tiempo restante: ${secondsLeft} segundos`;
+			if (secondsLeft === 0) {
+				clearInterval(countdown);
+				document.getElementById('take-photo-btn').disabled = false;
+				countdownTimer.textContent = '';
+			}
+		}
+
+		// Función para iniciar la cuenta atrás
+		function startCountdown() {
+			let secondsLeft = 3;
+			updateCountdown(secondsLeft);
+			countdown = setInterval(function() {
+				secondsLeft--;
+				updateCountdown(secondsLeft);
+			}, 1000);
+		}
+
+		// Manejador para el botón de inicio de la cuenta atrás
+		document.getElementById('countdown-btn').addEventListener('click', function() {
+			startCountdown();
+			this.disabled = true;
+		});
+
+		// Manejador para el botón de tomar la foto
+		document.getElementById('take-photo-btn').addEventListener('click', function() {
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			const dataURL = canvas.toDataURL('image/jpeg');
+			const xhr = new XMLHttpRequest();
+			xhr.open('POST', '/guardarfoto');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+					document.getElementById('photo-preview').src = dataURL;
+				}
+			};
+			xhr.send(`photo=${encodeURIComponent(dataURL)}`);
+			this.disabled = true;
+			document.getElementById('countdown-btn').disabled = false;
+		});
+	</script>
+</body>
+</html>
+

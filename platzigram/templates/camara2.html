@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tomar foto y enviar a servidor</title>
+</head>
+<body>
+
+<h1>Tomar foto y enviar a servidor</h1>
+
+<!-- Agregar video en vivo -->
+<video id="video" width="640" height="480" autoplay></video>
+
+<!-- Contador de cuenta atrás -->
+<p id="countdown"></p>
+
+<script>
+// Obtener la referencia al elemento de video
+var video = document.getElementById('video');
+
+// Pedir permiso para usar la cámara
+navigator.mediaDevices.getUserMedia({video: true})
+.then(function(stream) {
+  // Mostrar la vista previa de la cámara en el elemento de video
+  video.srcObject = stream;
+});
+
+// Iniciar la cuenta atrás
+var seconds = 3;
+var countdownElement = document.getElementById("countdown");
+var countdownInterval = setInterval(function() {
+  if (seconds > 0) {
+    countdownElement.innerHTML = seconds + " segundos para la foto";
+    seconds--;
+  } else {
+    clearInterval(countdownInterval);
+    countdownElement.innerHTML = "Tomando foto...";
+    // Tomar la foto
+    var canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    var dataURL = canvas.toDataURL('image/jpeg');
+    // Enviar la foto al servidor usando una solicitud HTTP POST
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:8000/media', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({image: dataURL}));
+    countdownElement.innerHTML = "Foto enviada al servidor";
+  }
+}, 1000);
+</script>
+
+</body>
+</html>

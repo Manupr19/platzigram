@@ -35,6 +35,7 @@ width: 800, height: 600
 
 // Acceso a la webcam
 async function init() {
+    
 try {
 const stream = await navigator.mediaDevices.getUserMedia(constraints);
 handleSuccess(stream);
@@ -49,6 +50,7 @@ video.srcObject = stream;
 }
 // Load init
 init();
+
 // Dibuja la imagen
 var context = canvas.getContext('2d');
 snap.addEventListener("click", function() {
@@ -57,11 +59,13 @@ context.drawImage(video, 0, 0, 640, 480);
 // Convertir la imagen a un objeto de archivo y crear un objeto FormData
 var file = canvas.toBlob(function(blob) {
         var formData = new FormData();
-        formData.append('photo', blob);
         
+        formData.append('photo', file);
+
         // Enviar la foto al servidor mediante una solicitud HTTP POST
         var request = new XMLHttpRequest();
-        request.open('POST', 'https://127.0.0.1:8000/media');
+    
+        request.open('POST', 'http://127.0.0.1:8000/laguardas');
         request.send(formData);
     });
 });

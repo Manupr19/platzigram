@@ -64,7 +64,7 @@ snap.addEventListener("click", function() {
         
         // Enviar la foto al servidor mediante una solicitud HTTP POST
         var request = new XMLHttpRequest();
-        request.open('POST', 'http://127.0.0.1:8000/guardarfoto/');
+        request.open('POST', 'http://127.0.0.1:8000/laguardas/');
         request.setRequestHeader('X-CSRFToken',csrf_token);
         request.send(formData);
     });

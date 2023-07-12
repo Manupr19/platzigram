@@ -10,11 +10,13 @@ from users import views as user_views
 from users import models
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
 
 def hello_world(request):
     return HttpResponse('Hello world')
 
+@csrf_exempt
 def guardarfoto(request):
     print("guardando foto")
     if request.method == 'POST':
@@ -34,9 +36,9 @@ urlpatterns = [
     path('admin/',admin.site.urls),
     path('users/',include(('users.urls','users'), namespace='users')),
     path('hola/',hello_world),
-    path('guardarfoto/',guardarfoto),
+    path('laguardas/',guardarfoto),
     path('vercamara/',vercamara),
-
+    
  
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
