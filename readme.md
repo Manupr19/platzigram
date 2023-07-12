@@ -851,3 +851,9 @@ class loginView(auth_views.LoginView):
    template_name='users/login.html'
 ```
 
+"# PLATZI" 
+"# PLATZI" 
+#   P L A T Z I  
+ #   P L A T Z I  
+ #   P L A T Z I  
+ 
