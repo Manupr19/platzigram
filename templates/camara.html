@@ -7,85 +7,99 @@
     <title>Document</title>
 </head>
 <body>
-    <!—Aquí el video embebido de la webcam -->
-<div class="video-wrap">
-<video id="video" playsinline autoplay></video>
-</div>
-<!—El elemento canvas -->
-<div class="controller">
-<button id="snap">Capture</button>
-</div>
-<!—Botón de captura -->
-<canvas id="canvas" width="640" height="480"></canvas> 
+    <!-- Aquí se muestra el video embebido de la webcam -->
+    <div class="video-wrap">
+        <video id="video" playsinline autoplay></video>
+    </div>
+
+    <!-- El elemento canvas -->
+    <div class="controller">
+        <button id="snap">Capture</button>
+    </div>
+
+    <!-- El botón de captura -->
+    <canvas id="canvas" width="640" height="480"></canvas> 
 
     <script>
         'use strict';
 
-const video = document.getElementById('video');
-const snap = document.getElementById("snap");
-const canvas = document.getElementById('canvas');
-const errorMsgElement = document.querySelector('span#errorMsg');
+        // Se obtienen las referencias a los elementos necesarios 
+        const video = document.getElementById('video');
+        const snap = document.getElementById("snap");
+        const canvas = document.getElementById('canvas');
+        const errorMsgElement = document.querySelector('span#errorMsg');
 
-const constraints = {
-audio: true,
-video: {
-width: 800, height: 600
-}
-};
+        // Se definen las restricciones para acceder a la webcam
+        const constraints = {
+            audio: true,
+            video: {
+                width: 800, height: 600
+            }
+        };
 
-// Acceso a la webcam
-async function init() {
-try {
-const stream = await navigator.mediaDevices.getUserMedia(constraints);
-handleSuccess(stream);
-} catch (e) {
-errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
-}
-}
-// Correcto!
-function handleSuccess(stream) {
-window.stream = stream;
-video.srcObject = stream;
-}
-// Load init
-init();
-// Dibuja la imagen
-var context = canvas.getContext('2d');
-snap.addEventListener("click", function() {
-    context.drawImage(video, 0, 0, 640, 480);
-    
-    //envia la imagen al servidor 
-    // Convertir la imagen a un objeto de archivo y crear un objeto FormData
-    var file = canvas.toBlob(function(blob) {
-        var formData = new FormData();
-        formData.append('photo', blob);
-        formData.append('user', 1);
-        const csrf_token=getCookie('csrftoken');
-        
-        // Enviar la foto al servidor mediante una solicitud HTTP POST
-        var request = new XMLHttpRequest();
-        request.open('POST', 'http://127.0.0.1:8000/laguardas/');
-        request.setRequestHeader('X-CSRFToken',csrf_token);
-        request.send(formData);
-    });
-});
+        // Función para acceder a la webcam
+        async function init() {
+            try {
+                // Se solicita el permiso para acceder a la webcam
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                // Se maneja correctamente la respuesta exitosa
+                handleSuccess(stream);
+            } catch (e) {
+                // Se muestra un mensaje de error en caso de que falle el acceso a la webcam
+                errorMsgElement.innerHTML = `navigator.getUserMedia error: ${e.toString()}`;
+            }
+        }
 
+        // Función para manejar la respuesta exitosa al acceder a la webcam
+        function handleSuccess(stream) {
+            // Se asigna el stream de la webcam al elemento de video
+            window.stream = stream;
+            video.srcObject = stream;
+        }
 
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
+        // Se llama a la función init() para acceder a la webcam
+        init();
+
+        // Dibuja la imagen capturada en el elemento canvas
+        var context = canvas.getContext('2d');
+        snap.addEventListener("click", function() {
+            // Se dibuja la imagen del video en el canvas
+            context.drawImage(video, 0, 0, 640, 480);
+            
+            // Se envía la imagen al servidor
+            // Se convierte la imagen en un objeto Blob y se crea un objeto FormData
+            var file = canvas.toBlob(function(blob) {
+                var formData = new FormData();
+                var cont = 0;
+                formData.append('photo', blob);
+                formData.append('user', cont);
+                cont++;
+                const csrf_token = getCookie('csrftoken');
+                
+                // Se envía la foto al servidor mediante una solicitud HTTP POST
+                var request = new XMLHttpRequest();
+                request.open('POST', 'http://127.0.0.1:8000/laguardas/');
+                request.setRequestHeader('X-CSRFToken', csrf_token);
+                request.send(formData);
+            });
+        });
+
+        // Función para obtener el valor de una cookie
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
     </script>
 </body>
 </html>
